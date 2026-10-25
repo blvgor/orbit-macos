@@ -13,8 +13,11 @@ capture harness. A blank `Demo.pdf` is generated for this demonstration.
 5. Tab-up runs the real converter. The readable PNG is saved beside the unchanged
    PDF. The controller dismisses the wheel; two files remain visible.
 
-The video and GIF use 100 offscreen native view captures at a scripted 10 fps. The pauses
-make the steps readable; they do not measure Finder response or conversion speed.
+The video uses 240 freshly rendered offscreen native frames at 30 fps, lasting
+8 seconds. The GIF uses the same frames with centisecond-rounded frame delays.
+Pointer paths use smooth easing; brief selection, caption, and appearance fades
+are presentation effects in the harness. The pauses make the steps readable;
+they do not measure Finder response or conversion speed.
 No global input is generated. The selection provider returns only the test PDF.
 
 To reproduce after building:
