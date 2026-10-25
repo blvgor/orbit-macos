@@ -2,7 +2,7 @@
 
 The five screenshots and animation show the actual 0.1.5 `WheelView` and
 `AppController` in a task-owned native window. This is a scripted demonstration,
-not a Finder screen recording. The neutral file area and pointer belong to the
+not a Finder screen recording. The scripted file area and pointer belong to the
 capture harness. A blank `Demo.pdf` is generated for this demonstration.
 
 1. The document is present, without selection or a wheel.
@@ -13,11 +13,14 @@ capture harness. A blank `Demo.pdf` is generated for this demonstration.
 5. Tab-up runs the real converter. The readable PNG is saved beside the unchanged
    PDF. The controller dismisses the wheel; two files remain visible.
 
-The video uses 240 freshly rendered offscreen native frames at 30 fps, lasting
-8 seconds. The GIF uses the same frames with centisecond-rounded frame delays.
+The video uses 150 freshly rendered offscreen native frames at 30 fps, lasting
+5 seconds. The GIF uses the same frames with centisecond-rounded frame delays.
 Pointer paths use smooth easing; brief selection, caption, and appearance fades
 are presentation effects in the harness. The pauses make the steps readable;
 they do not measure Finder response or conversion speed.
+The wheel starts appearing 0.17 seconds after selection; the final pair remains
+for two seconds. The PNG is placed 72 points beside the original. The blue/teal/
+coral backdrop contains no personal desktop information.
 No global input is generated. The selection provider returns only the test PDF.
 
 To reproduce after building:

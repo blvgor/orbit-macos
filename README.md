@@ -9,7 +9,7 @@ and choose a format. Orbit saves a new file next to the original.
 
 Version **0.1.5**, an early local utility. The interface is in Russian.
 
-[Watch the walkthrough](docs/media/orbit-demo-30fps.mp4) · [GIF](docs/media/orbit-demo-30fps.gif).
+[Watch the walkthrough](docs/media/orbit-demo-color-30fps.mp4) · [GIF](docs/media/orbit-demo-color-30fps.gif).
 The screenshot uses an isolated native test window; [capture details](docs/demo.md).
 
 ## Why

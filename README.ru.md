@@ -10,7 +10,7 @@
 Версия **0.1.5**. Интерфейс на русском. Orbit работает в строке меню,
 без значка в Dock и стартового окна.
 
-[Видео Tab → PNG](docs/media/orbit-demo-30fps.mp4) · [GIF](docs/media/orbit-demo-30fps.gif).
+[Видео Tab → PNG](docs/media/orbit-demo-color-30fps.mp4) · [GIF](docs/media/orbit-demo-color-30fps.gif).
 Снимок сделан в отдельном нативном тестовом окне: [подробнее](docs/demo.md).
 
 ## Зачем

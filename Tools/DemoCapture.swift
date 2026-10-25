@@ -15,14 +15,21 @@ import CoreGraphics
     let fileCenter = CGPoint(x:480,y:312)
     let titles = ["Start with a document", "Click to select", "Press and hold", "Choose PNG", "Saved beside the original"]
     override func draw(_ dirtyRect:NSRect) {
-        NSColor(white:0.12,alpha:1).setFill(); bounds.fill()
-        text("ORBIT",rect:NSRect(x:40,y:30,width:160,height:20),size:12,weight:.semibold,color:NSColor(white:0.7,alpha:1))
-        text(String(format:"%02d / 05",step+1),rect:NSRect(x:800,y:30,width:120,height:20),size:12,weight:.medium,color:NSColor(white:0.55,alpha:1),alignment:.right)
+        if let c=NSGraphicsContext.current?.cgContext,
+           let gradient=CGGradient(colorsSpace:CGColorSpace(name:CGColorSpace.sRGB),colors:[
+               NSColor(srgbRed:0.04,green:0.21,blue:0.48,alpha:1).cgColor,
+               NSColor(srgbRed:0.02,green:0.43,blue:0.58,alpha:1).cgColor,
+               NSColor(srgbRed:0.83,green:0.33,blue:0.22,alpha:1).cgColor
+           ] as CFArray,locations:[0,0.58,1]) {
+            c.drawLinearGradient(gradient,start:.zero,end:CGPoint(x:bounds.width,y:bounds.height),options:[.drawsBeforeStartLocation,.drawsAfterEndLocation])
+        }
+        text("ORBIT",rect:NSRect(x:40,y:30,width:160,height:20),size:12,weight:.semibold,color:NSColor.white.withAlphaComponent(0.9))
+        text(String(format:"%02d / 05",step+1),rect:NSRect(x:800,y:30,width:120,height:20),size:12,weight:.medium,color:NSColor.white.withAlphaComponent(0.85),alignment:.right)
         drawFile("Demo.pdf",center:fileCenter,selected:selected,badge:"PDF",color:NSColor(red:0.81,green:0.22,blue:0.25,alpha:1))
         if complete {
             NSGraphicsContext.current?.cgContext.saveGState()
             NSGraphicsContext.current?.cgContext.setAlpha(resultOpacity)
-            drawFile("Demo.png",center:CGPoint(x:640,y:312),selected:false,badge:"PNG",color:NSColor(red:0.2,green:0.48,blue:0.82,alpha:1))
+            drawFile("Demo.png",center:CGPoint(x:552,y:312),selected:false,badge:"PNG",color:NSColor(red:0.2,green:0.48,blue:0.82,alpha:1))
             NSGraphicsContext.current?.cgContext.restoreGState()
         }
         if let previousStep, captionMix < 0.5 {
@@ -46,7 +53,7 @@ import CoreGraphics
             text(titles[step],rect:NSRect(x:80,y:captionY,width:800,height:30),size:20,weight:.medium,color:.white,alignment:.center)
         }
         let details = ["A blank PDF. Ready to convert.","The document is now selected.","The wheel opens around the document.","Move to PNG, then release Tab.","The original stays. The wheel closes."]
-        text(details[step],rect:NSRect(x:80,y:552,width:800,height:22),size:13,weight:.regular,color:NSColor(white:0.65,alpha:1),alignment:.center)
+        text(details[step],rect:NSRect(x:80,y:552,width:800,height:22),size:13,weight:.regular,color:NSColor.white.withAlphaComponent(0.9),alignment:.center)
     }
     func text(_ string:String,rect:NSRect,size:CGFloat,weight:NSFont.Weight,color:NSColor,alignment:NSTextAlignment = .left) {
         let p = NSMutableParagraphStyle(); p.alignment = alignment
@@ -152,7 +159,8 @@ import CoreGraphics
                 wheel.mouseMoved(with:e)
             }
         }
-        let fps=30, frameCount=240
+        let fps=30, frameCount=150
+        let clickedAt=1.0, invokedAt=35.0/30, committedAt=3.0
         var invoked=false, released=false
         var stepChangedAt = -1.0
         var motion:[ [String:Double] ] = []
@@ -164,35 +172,35 @@ import CoreGraphics
             guard next != scene.step else { return }
             scene.previousStep=scene.step; scene.step=next; stepChangedAt=time
         }
-        let snapshots=[15:"01-document",60:"02-selected",95:"03-hold-tab",140:"04-choose-png",205:"05-complete"]
+        let snapshots=[9:"01-document",34:"02-selected",48:"03-hold-tab",81:"04-choose-png",126:"05-complete"]
         for frame in 0..<frameCount {
             let t=Double(frame)/Double(fps)
-            if t<0.6 { move(CGPoint(x:650,y:390),hover:false) }
-            else if t<1.25 {
-                let u=smooth((t-0.6)/0.65)
+            if t<0.5 { move(CGPoint(x:650,y:390),hover:false) }
+            else if t<clickedAt {
+                changeStep(1,at:t)
+                let u=smooth((t-0.5)/0.5)
                 move(CGPoint(x:650-170*u,y:390-78*u-8*sin(.pi*u)),hover:false)
-            } else if t<3.6 { move(scene.fileCenter,hover:false) }
-            if t>=1.25 && !scene.selected { scene.selected=true }
-            scene.selectionOpacity=smooth((t-1.25)/0.12)
-            cursor.pressed=t>=1.25 && t<1.35
-            if t>=1.25 && t<2.35 { changeStep(1,at:t) }
-            if t>=2.35 && !invoked {
+            } else if t<1.95 { move(scene.fileCenter,hover:false) }
+            if t>=clickedAt && !scene.selected { scene.selected=true }
+            scene.selectionOpacity=smooth((t-clickedAt)/0.1)
+            cursor.pressed=t>=clickedAt && t<clickedAt+0.1
+            if t>=invokedAt && !invoked {
                 invoked=true; _=controller.handle(key(.keyDown))
                 let deadline=Date().addingTimeInterval(3)
                 while controller.selectionTask != nil && Date()<deadline { RunLoop.current.run(until:Date().addingTimeInterval(0.01)) }
                 guard controller.wheel.inputs == [input], controller.tabHeld else { throw OrbitFailure.message("Tab invocation failed") }
             }
-            if t>=2.35 && t<3.6 {
+            if t>=invokedAt && t<1.95 {
                 changeStep(2,at:t)
-                wheel.alphaValue=smooth((t-2.35)/0.16)
+                wheel.alphaValue=smooth((t-invokedAt)/0.06)
             }
-            if t>=3.6 && t<4.2 {
+            if t>=1.95 && t<2.45 {
                 changeStep(3,at:t)
-                let u=smooth((t-3.6)/0.6)
+                let u=smooth((t-1.95)/0.5)
                 move(CGPoint(x:480+9*sin(.pi*u),y:312-82*u),hover:true)
             }
-            if t>=4.2 && t<5.2 { move(CGPoint(x:480,y:230),hover:true) }
-            if t>=5.2 && !released {
+            if t>=2.45 && t<committedAt { move(CGPoint(x:480,y:230),hover:true) }
+            if t>=committedAt && !released {
                 released=true
                 guard controller.pending == .png else { throw OrbitFailure.message("Pointer did not select PNG") }
                 _=controller.handle(key(.keyUp))
@@ -201,12 +209,8 @@ import CoreGraphics
                 guard controller.lastResult?.files.first?.pathExtension == "png", wheel.isHidden else { throw OrbitFailure.message("Output or dismissal failed") }
                 scene.complete=true; changeStep(4,at:t)
             }
-            if t>=5.2 {
-                let u=smooth((t-5.2)/0.5)
-                move(CGPoint(x:480+70*u,y:230+90*u),hover:false)
-                scene.resultOpacity=smooth((t-5.2)/0.16)
-            }
-            scene.captionMix=smooth((t-stepChangedAt)/0.18)
+            if t>=committedAt { scene.resultOpacity=smooth((t-committedAt)/0.08) }
+            scene.captionMix=smooth((t-stepChangedAt)/0.12)
             motion.append(["frame":Double(frame),"time":t,"x":cursor.point.x,"y":cursor.point.y])
             let frameURL=folder.appendingPathComponent(String(format:"frames/%03d.png",frame))
             try capture(frameURL)
@@ -217,6 +221,7 @@ import CoreGraphics
         for url in output.files { try ImageCodec.validate(url) }
         let report:[String:Any]=[
             "fps":fps,"frameCount":frameCount,"durationSeconds":Double(frameCount)/Double(fps),
+            "selectionToWheelSeconds":invokedAt-clickedAt,"finalPairSeconds":Double(frameCount)/Double(fps)-committedAt,"resultOffsetPoints":72,
             "version":"0.1.5","ownWindowID":window.windowNumber,"backdropWindowID":backdrop.windowNumber,
             "frontBefore":frontBefore,"frontAfter":NSWorkspace.shared.frontmostApplication?.processIdentifier ?? -1,
             "windowNeverKey":!window.isKeyWindow,"windowNeverMain":!window.isMainWindow,
@@ -231,6 +236,6 @@ import CoreGraphics
         ]
         guard report["demoNeverFrontmost"] as? Bool == true else { throw OrbitFailure.message("Demo unexpectedly became frontmost") }
         try JSONSerialization.data(withJSONObject:report,options:[.prettyPrinted,.sortedKeys]).write(to:folder.appendingPathComponent("capture-report.json"))
-        print("Five stages and 240 fresh animation frames captured at 30 fps. Actual Tab → hover PNG → release → save → dismissal passed.")
+        print("Five stages and 150 fresh animation frames captured at 30 fps. Actual Tab → hover PNG → release → save → dismissal passed.")
     }
 }
