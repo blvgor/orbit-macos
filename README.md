@@ -5,11 +5,11 @@ and choose a format. Orbit saves a new file next to the original.
 
 [Русская инструкция](README.ru.md) · [How it works](docs/architecture.md) · [MIT](LICENSE)
 
-![Hold Tab to open Orbit around a selected document](docs/media/03-hold-tab.png)
+![Select a document, hold Tab, choose PNG, and keep the original](docs/media/orbit-demo-color-30fps.gif)
 
 Version **0.1.5**, an early local utility. The interface is in Russian.
 
-[Watch the walkthrough](docs/media/orbit-demo-color-30fps.mp4) · [GIF](docs/media/orbit-demo-color-30fps.gif).
+[Download the MP4](docs/media/orbit-demo-color-30fps.mp4?raw=1) · [GIF](docs/media/orbit-demo-color-30fps.gif).
 The screenshot uses an isolated native test window; [capture details](docs/demo.md).
 
 ## Why

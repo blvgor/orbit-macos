@@ -5,12 +5,12 @@
 
 [English](README.md) · [Устройство приложения](docs/architecture.md) · [MIT](LICENSE)
 
-![Круг Orbit вокруг выделенного документа при удержании Tab](docs/media/03-hold-tab.png)
+![Выделение документа, удержание Tab, выбор PNG и сохранение оригинала](docs/media/orbit-demo-color-30fps.gif)
 
 Версия **0.1.5**. Интерфейс на русском. Orbit работает в строке меню,
 без значка в Dock и стартового окна.
 
-[Видео Tab → PNG](docs/media/orbit-demo-color-30fps.mp4) · [GIF](docs/media/orbit-demo-color-30fps.gif).
+[Скачать видео MP4](docs/media/orbit-demo-color-30fps.mp4?raw=1) · [GIF](docs/media/orbit-demo-color-30fps.gif).
 Снимок сделан в отдельном нативном тестовом окне: [подробнее](docs/demo.md).
 
 ## Зачем
